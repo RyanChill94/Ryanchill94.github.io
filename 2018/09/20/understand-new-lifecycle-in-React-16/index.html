@@ -1,0 +1,102 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> [译]理解 React v16 新的生命周期 · DAY DREAM</title><meta name="description" content="[译]理解 React v16 新的生命周期 - Ryanchill"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><link rel="search" type="application/opensearchdescription+xml" href="http://yoursite.com/atom.xml" title="DAY DREAM"><script src="//code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script></head><body><div class="wrap"><header><a href="/" class="logo-link"><img src="/favicon.png" alt="logo"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/archives/" target="_self" class="nav-list-link">ARCHIVE</a></li><li class="nav-list-item"><a href="/tags/" target="_self" class="nav-list-link">TAG</a></li><li class="nav-list-item"><a href="https://github.com/ryanchill94" target="_blank" class="nav-list-link">GITHUB</a></li><li class="nav-list-item"><a href="/search" target="_self" class="nav-list-link search"><i class="fa fa-search" aria-hidden="true"></i></a></li></ul></header><main class="container"></main><div class="post"><article class="post-block"><h1 class="post-title">[译]理解 React v16 新的生命周期</h1><div class="post-info">2018年9月20日<span class="categories"><i class="fa fa-bookmark" aria-hidden="true"></i></span></div><div class="post-content"><h1 id="理解-React-v16-4-的新的生命周期"><a href="#理解-React-v16-4-的新的生命周期" class="headerlink" title="理解 React v16.4+ 的新的生命周期"></a>理解 React v16.4+ 的新的生命周期</h1><blockquote>
+<p>原文链接:<br><a href="https://blog.bitsrc.io/understanding-react-v16-4-new-component-lifecycle-methods-fa7b224efd7d" target="_blank" rel="noopener">Understanding React v16.4+ New Component Lifecycle Methods</a>（略有删减）</p>
+</blockquote>
+<p>ReactJs v16.3 为我们展现了显著变化的组件生命周期，废弃了一些生命周期同时增加了几个额外的生命周期。</p>
+<p>在这篇文章，我们深入 React v16.3+ 的生命周期 ，我们会用React构建一个音乐播放器来获得实战经验。</p>
+<h2 id="React-与-UI"><a href="#React-与-UI" class="headerlink" title="React 与 UI"></a>React 与 UI</h2><p>React 的官方介绍称：‘React 是一个用来构建 UI 的界面’。</p>
+<p>用户界面是一个多选项场景，用户可以做各种各样的事情，想React这样的第三库就是用于构建这类场景的。</p>
+<p>用户通过在 UI 组件中点击、滑动、点击按钮、或者其他行为来于我们的应用交互。 所有的UI组件在浏览器中诞生 并且在某个特定的时间点会消失。</p>
+<h2 id="为什么生命周期函数很重要"><a href="#为什么生命周期函数很重要" class="headerlink" title="为什么生命周期函数很重要?"></a>为什么生命周期函数很重要?</h2><p>世间万物，所有的事物都有一系列的事件驱动。</p>
+<p>详见原文，这里不做翻译，大意是作者的一些感悟。</p>
+<p>如果可以感知这些生命周期，我们就可以就可以控制整个流向，毫无疑问可以帮我们产出更好的结果。</p>
+<h2 id="废弃的方法于新的静态生命周期方法"><a href="#废弃的方法于新的静态生命周期方法" class="headerlink" title="废弃的方法于新的静态生命周期方法"></a>废弃的方法于新的静态生命周期方法</h2><p>在 React 16.3中，有少数的生命周期方法被删除。目前，这些方法都增加了一个前缀 UNSAFE_ ，并将在下一个主要版本中完全删除。 同时，现存的React应用可以向新的 React 生命周期逐渐迁移。</p>
+<p>Componentwillmount，componentwillreceiveprobulps 和 componentententwillupdate 这样的方法被大量滥用，因为当前的实例中<code>this</code>是可用的，并且容易被滥用。 React 开发组决定删除了容易出错的方法，使整个React组件的生命周期更加简单。</p>
+<p>为了提高反应的用户体验和性能，团队正朝着异步渲染的方向发展。 静态生命周期方法背后的动机主要是使方法更容易和兼容的异步渲染。</p>
+<p>下面的链接是 Dan Abramov 制作的关于异步渲染演示。<br><a href="https://www.youtube.com/watch?v=nLF0n9SACd4" target="_blank" rel="noopener">video link</a></p>
+<p>以下的方法是被废弃的:</p>
+<p>1.componentWillMount</p>
+<p>所有遗留的使用场景都可以被构造函数覆盖，被重命名为UNSAFE_componentWillMount.</p>
+<p>2.componentWillReceiveProps</p>
+<p>新的静态方法 getDerivedStateFromProps 安全的重写了方法，并且涵盖了 componentWillReceiveProps 的所有用例，这个方法被重命名为 UNSAFE_componentWillReceiveProps。</p>
+<p>3.componentWillUpdate</p>
+<p>新方法 getSnapshotBeforeUpdate 对此方法进行了安全的重写，涵盖了 componentWillUpdate 的所有用例。<br>该方法被重命名为 UNSAFE_componentWillUpdate。</p>
+<h2 id="最新-React-组件生命周期的执行阶段"><a href="#最新-React-组件生命周期的执行阶段" class="headerlink" title="最新 React 组件生命周期的执行阶段"></a>最新 React 组件生命周期的执行阶段</h2><p>继承至React.Component的组件会依次经历以下的阶段</p>
+<ul>
+<li>Mounting（装载）</li>
+<li>Updating （更新）</li>
+<li>Unmounting （卸载）</li>
+</ul>
+<p>下图代表了 React 的最新生命周期的阶段和方法。<br><img src="/img/postImg/lifecycle.png" alt="new-lifecycle-in-react"></p>
+<h3 id="1-装载（Mounting）"><a href="#1-装载（Mounting）" class="headerlink" title="1) 装载（Mounting）"></a>1) 装载（Mounting）</h3><p>在 React 领域中，装载（mount）是指的是在 DOM 上加载组件。 这个阶段包含一组方法，这些方法在组件初始化时会被调用，然后加载到 DOM。</p>
+<p>方法的调用顺序如下：</p>
+<ul>
+<li>constructor</li>
+</ul>
+<p>这是每次创建组件时都会调用的第一个方法。 构造函数在组件的整个生命周期中只被调用一次。 它用于设置变量和组件状态的初始值。</p>
+<p>使用方法: 设置组件的初始状态。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ContraMusicPlayer</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span></span></span><br><span class="line"><span class="class"><span class="title">constructor</span>(<span class="title">props</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">super</span>(props);</span><br><span class="line">  <span class="keyword">this</span>.state = &#123;</span><br><span class="line">    volume: <span class="number">70</span>,</span><br><span class="line">    status: <span class="string">'pause'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们渲染 <code>&lt;ContraMusicPlayer&gt;</code> 组件，组件的初始状态将会是音量70，处于暂停状态。</p>
+<p>在 React 领域， construct 是唯一一个<code>this.state</code>直接使用的地方，在其他方法里面，更改<code>state</code>只能使用<code>this.setState()</code>.</p>
+<ul>
+<li>static getDerivedStateFromProps</li>
+</ul>
+<p>正如这个名字所建议的一样，从props 获取驱动状态，适用于state是依赖于props的，因此，每当props发生变更的时候，state必须保持同步，这个方法在构造函数之后调用，函数的返回对象作为更新state的对象，如果返回<code>null</code>,那么state就不会发生更新。</p>
+<p><code>getDerivedStateFromProps</code>是一个静态的方法，因此它无法访问<code>this</code>。 该方法可以访问当前<code>props</code>和<code>state</code>。 因此，如果<code>state</code>依赖于<code>props</code>，那么这个状态就可以在这里更新。 这种方法是 React v16.3+ 中的全新添加。<br>使用方法: 保持state与传进来的props一致。 这个方法更安全地替换了 componentWillReceiveProps。 这个方法是一个纯函数，因此不应该在这里写任何产生副作用的方法。</p>
+<blockquote>
+<p>译者注：副作用并不是react专有的名词，这是一个描述函数行为的基本概念，一个有副作用的函数意味着，函数尝试改变当前函数作用域以外的变量，例如，改变全局变量、网络请求等等</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">static</span> getDerivedStateFromProps(props, state) &#123;</span><br><span class="line">  <span class="keyword">if</span> (state.value !== props.value) &#123;</span><br><span class="line">      <span class="keyword">return</span> &#123;</span><br><span class="line">        derivedValue: deriveValueFromProps(props),</span><br><span class="line">        mirroredProp: props.value</span><br><span class="line">      &#125;</span><br><span class="line">     &#125;</span><br><span class="line">  <span class="comment">// when null is returned no update is made to the state</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// after getDerivedStateFromProps the state looks like as follows:</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//   &#123;</span></span><br><span class="line"><span class="comment">//    derivedValue: someValue,</span></span><br><span class="line"><span class="comment">//    mirrordValue: newPropValue</span></span><br><span class="line"><span class="comment">//   &#125;</span></span><br></pre></td></tr></table></figure>
+<p>在上面的例子中，为了跟踪props值的变化，props的实际值在会映射一份在state中，用来与下一次props作比较。</p>
+<p>有几种方法可以避免使用props来推导state <a href="https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html" target="_blank" rel="noopener">参考这篇文章</a></p>
+<ul>
+<li>render</li>
+</ul>
+<p>这是在 React 组件中必需的方法，因为该方法预先准备了装载生成浏览器中的DOM的元素。这是一个纯函数，意味着每次提供相同的输入都会给出相同的输出（相同的UI）。该方法不应该有任何副作用，比如如改变状态。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">render() &#123;</span><br><span class="line">  &lt;div&gt;</span><br><span class="line">     &lt;PlayHeader&gt;</span><br><span class="line">       &lt;Status/&gt;</span><br><span class="line">       &lt;VolumeBar/&gt;</span><br><span class="line">       &lt;SeekBar/&gt;</span><br><span class="line">    &lt;<span class="regexp">/PlayHeader&gt;</span></span><br><span class="line"><span class="regexp">   &lt;/</span>div&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>componentDidMount</li>
+</ul>
+<p>The following example shows the setup of Highcharts when the DOM is ready</p>
+<p>这是在组件挂载到浏览器 DOM 后立即调用的 hook 方法。</p>
+<p>使用方法: 所有与浏览器 DOM 的直接交互，并与像 Highcharts 或 D3这样的第三方库集成。 </p>
+<p>下面的示例显示了在 DOM 生成好之后 Highcharts 实例的生成。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">componentDidMount() &#123;</span><br><span class="line"> <span class="keyword">if</span> (<span class="keyword">this</span>.props.modules) &#123;</span><br><span class="line">            <span class="keyword">this</span>.props.modules.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">module</span>) </span>&#123;</span><br><span class="line">                <span class="built_in">module</span>(Highcharts);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Set container which the chart should render to.</span></span><br><span class="line">        <span class="keyword">this</span>.chart = <span class="keyword">new</span> Highcharts[<span class="keyword">this</span>.props.type || <span class="string">"Chart"</span>](</span><br><span class="line">            <span class="keyword">this</span>.props.container, </span><br><span class="line">            <span class="keyword">this</span>.props.options</span><br><span class="line">        );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-更新（Updating）"><a href="#2-更新（Updating）" class="headerlink" title="2) 更新（Updating）"></a>2) 更新（Updating）</h3><p>当 React 组件在浏览器上装载并通过接收新的更新来更新组件时，这个阶段就开始了。 组件可以通过两种方式进行更新，接收从父母那里发送新的props或者更新当前state。</p>
+<p>当更新以任何方式发生时，将按顺序调用的方法列表:</p>
+<ul>
+<li>static getDerivedStateFromProps</li>
+</ul>
+<p>This method behaves exactly as defined above in mounting phase.<br>这个方法得行为和之前在装载阶段描述的完全一致</p>
+<ul>
+<li>shouldComponentUpdate</li>
+</ul>
+<p>这个方法告诉 React，当组件正在更新时，它应该重新渲染还是跳过渲染。</p>
+<p>这个方法是选择（原文:a question），是否应该更新组件？因此，此方法应返回 true 或 false，因此，组件将被重新渲染或跳过。默认情况下，此方法返回 true。</p>
+<p>使用方法: 本例是渲染成本相当高的情况之一，我们希望只在props状态发生变化时才重新渲染组件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shouldComponentUpdate(nextProps, nextState) &#123;</span><br><span class="line">  <span class="keyword">let</span> shouldUpdate = <span class="keyword">this</span>.props.status !== nextProps.status;</span><br><span class="line">  <span class="keyword">return</span> shouldUpdate;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如，假设对于每个渲染，组件生成一千个素数。 如果某些应用有这种逻辑，那么我们就可以控制什么时候需要它，并确保组件被渲染。</p>
+<p>然后将组件呈现出来(细节在装载阶段)。</p>
+<ul>
+<li>getSnapshotBeforeUpdate</li>
+</ul>
+<p>这个方法在渲染创建了 React 元素之后被调用，在它从虚拟 DOM 更新到实际 DOM 之前。 这个阶段称为预提交(<code>pre-commit</code>)阶段。</p>
+<p>这种方法可以访问以前和当前的props和state。</p>
+<p>如果方法 snapshotbeforeupdate 返回一个值，那么 componentDidUpdate 第三个参数会获得这个值（<code>componentDidUpdate(prevProps, prevState, snapshot)</code>），那么 UI 就可以在渲染之前和之后进行同步。</p>
+<p>使用方法: 如果您希望在当前 DOM 的 state 与更新的 DOM 之间保持同步，这个方法非常有用。 例如滚动位置、音频 / 视频、文字选择、光标位置、tooltip位置等等。</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Snapshot = <span class="built_in">number</span> | <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> ScrollingList <span class="keyword">extends</span> React.Component&lt;Props, State, Snapshot&gt; &#123;</span><br><span class="line">  listRef = React.createRef();</span><br><span class="line"></span><br><span class="line">  getSnapshotBeforeUpdate(</span><br><span class="line">    prevProps: Props,</span><br><span class="line">    prevState: State</span><br><span class="line">  ): Snapshot &#123;</span><br><span class="line">    <span class="comment">// Are we adding new items to the list?</span></span><br><span class="line">    <span class="comment">// Capture the current height of the list so we can adjust scroll later.</span></span><br><span class="line">    <span class="keyword">if</span> (prevProps.list.length &lt; <span class="keyword">this</span>.props.list.length) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">this</span>.listRef.value.scrollHeight;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  componentDidUpdate(</span><br><span class="line">    prevProps: Props,</span><br><span class="line">    prevState: State,</span><br><span class="line">    snapshot: Snapshot</span><br><span class="line">  ) &#123;</span><br><span class="line">    <span class="comment">// If we have a snapshot value, then we've just added new items.</span></span><br><span class="line">    <span class="comment">// Adjust scroll so these new items don't push the old ones out of view.</span></span><br><span class="line">    <span class="keyword">if</span> (snapshot !== <span class="literal">null</span>) &#123;</span><br><span class="line">      <span class="keyword">this</span>.listRef.value.scrollTop +=</span><br><span class="line">        <span class="keyword">this</span>.listRef.value.scrollHeight - snapshot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div ref=&#123;<span class="keyword">this</span>.listRef&#125;&gt;&#123;<span class="comment">/* ...contents... */</span>&#125;&lt;<span class="regexp">/div&gt;</span></span><br><span class="line"><span class="regexp">    );</span></span><br><span class="line"><span class="regexp">  &#125;</span></span><br><span class="line"><span class="regexp">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>想了解更多可以查看这个<a href="https://github.com/reactjs/rfcs/blob/master/text/0033-new-commit-phase-lifecycles.md#basic-example" target="_blank" rel="noopener">链接</a>.</p>
+<ul>
+<li>componentDidUpdate</li>
+</ul>
+<p>当新更新的组件在 DOM 中更新时，将执行 componentDidUpdate ，该方法用于重新触发第三方库的使用，并确保这些库也更新和重新加载自己。</p>
+<p>用法: 用例大多与 componentDidMount 的用例相似，以保持第三方库或用户界面与每次更新同步。</p>
+<h3 id="3-卸载（Unmounting）"><a href="#3-卸载（Unmounting）" class="headerlink" title="3) 卸载（Unmounting）"></a>3) 卸载（Unmounting）</h3><p>在这个阶段，组件将不再被需要，组件将从 DOM 中卸载。</p>
+<p>下面是这个阶段调用的方法:</p>
+<ul>
+<li>componentWillUnmount 这个方法是生命周期的最后方法。 这是在组件从 DOM 中移除之前执行的。</li>
+</ul>
+<p>使用方法: 在这个方法中，我们做与组件相关的所有清理动作。</p>
+<p>例如，在登出的时候，用户的详细信息和所有权限token可以在卸载主要组件之前被清除。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">componentWillUnmount() &#123;</span><br><span class="line"><span class="keyword">this</span>.chart.destroy();</span><br><span class="line"><span class="keyword">this</span>.resetLocalStorage();</span><br><span class="line"><span class="keyword">this</span>.clearSession();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结:)"></a>总结:)</h2><p>理解 React 的生命周期方法有助于我们在构建 React 组件和应用程序时产生最好的结果。 了解它们是如何工作的，如何使用它们可以提高性能，并且可以帮助我们保持更新和充分利用 React 16.4+ 。👏</p>
+</div><p class="post-tags"><i class="fa fa-tags" aria-hidden="true"></i><a href="/tags/Translation/">#Translation</a><a href="/tags/React/">#React</a></p></article></div><footer><div class="paginator"><a href="/2018/09/30/five-bad-parts-fix-in-es6/" class="prev">PREV</a></div><div class="copyright"><p>© 2017 - 2018 <a href="http://yoursite.com">Ryanchill</a>, powered by <a href="https://hexo.io/" target="_blank">Hexo</a> and <a href="https://github.com/pinggod/hexo-theme-apollo" target="_blank">hexo-theme-apollo</a>.</p></div></footer></div><script async src="//cdn.bootcss.com/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML" integrity="sha384-crwIf/BuaWM9rM65iM+dWFldgQ1Un8jWZMuh3puxb8TOY9+linwLoI7ZHZT+aekW" crossorigin="anonymous"></script><link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css" media="screen" type="text/css"><script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script><script>$(function(){$('.datatable').dataTable( {"order": [[ 0, "desc" ]],"iDisplayLength": -1,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]} );});</script></body></html>
